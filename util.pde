@@ -6,6 +6,10 @@ PImage duplicate(PImage frame) {
   return f;
 }
 
+// Using SimpleOpenNI, the RGB stream shows a larger
+// field of view than the depth/IR streams. This
+// enbiggens the video such that physical objects (like
+// PEOPLE) show up roughly the same size on all streams.
 PImage sizeVideoToDepth(PImage video) {
   int w = video.width;
   int h = video.height;
