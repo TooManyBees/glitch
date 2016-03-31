@@ -7,6 +7,10 @@ class GlitchBuffer {
   GlitchBuffer(int w, int h) {
     this.w = w;
     this.h = h;
+    // How sensitive should we be?
+    // 50: picks of lots of motion
+    // 60: ideal value for a single person, but won't pick up my hair :/
+    // 80: mostly captures sweeping gentures with limbs
     threshold = 0.6;
     buffer = createImage(w, h, HSB);
   }
