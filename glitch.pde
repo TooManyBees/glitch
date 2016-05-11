@@ -98,6 +98,16 @@ void keyPressed() {
       removeBorder(bordered);
     break;
   }
+
+  if (key == CODED) {
+    if (keyCode == UP) {
+      glitchBuffer.crankUpTheRainbows();
+      println("RAINBOW FACTOR "+glitchBuffer.factor()+" ENGAGE!");
+    } else {
+      glitchBuffer.dialBackTheRainbows();
+      println("RAINBOW FACTOR "+glitchBuffer.factor()+" ENGAGE!");
+    }
+  }
 }
 
 void printHelp() {

@@ -28,6 +28,18 @@ class GlitchBuffer {
     }
   }
 
+  int factor() {
+    return int(0.5/threshold * 100);
+  }
+
+  void crankUpTheRainbows() {
+    threshold = max(0, threshold - 0.05);
+  }
+
+  void dialBackTheRainbows() {
+    threshold = min(1, threshold + 0.05);
+  }
+
   PImage getMask() {
     PImage mask = duplicate(buffer);
     mask.filter(THRESHOLD, threshold);
