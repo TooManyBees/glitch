@@ -24,9 +24,9 @@ void setup() {
   bordered = true;
 
   if (!context.isInit()) {
-     println("We fucked up somehow!"); 
-     exit();
-     return;  
+    println("We fucked up somehow!");
+    exit();
+    return;
   }
 
   context.setMirror(true);
