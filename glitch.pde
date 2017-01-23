@@ -54,7 +54,8 @@ void draw() {
     if (threshold) {
       video.filter(THRESHOLD, 0.2);
       if (maskUsers) {
-        video = userMask.mask(video, context.userMap());
+        // video = userMask.mask(video, context.userMap());
+        userMask.mask_over(video, context.userMap());
       }
     }
 
