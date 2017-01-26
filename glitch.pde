@@ -10,6 +10,7 @@ boolean displayVideo;
 boolean threshold;
 boolean maskUsers;
 boolean record;
+boolean paused;
 
 void setup() {
   size(640, 480);
@@ -21,6 +22,7 @@ void setup() {
   threshold = true;
   maskUsers = true;
   record = false;
+  paused = false;
 
   if (!context.isInit()) {
     println("We fucked up somehow!");
@@ -87,6 +89,14 @@ void keyPressed() {
     break;
     case 't':
       threshold = !threshold;
+    break;
+    case ' ':
+      paused = !paused;
+      if (paused) {
+        noLoop();
+      } else {
+        loop();
+      }
     break;
   }
 
