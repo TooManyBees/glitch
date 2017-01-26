@@ -13,8 +13,15 @@ boolean maskUsers;
 boolean record;
 boolean paused;
 
+int scaleHeight;
+int scaleWidth;
+
+private final int CAMERA_WIDTH = 640;
+private final int CAMERA_HEIGHT = 480;
+
 void setup() {
-  size(640, 480);
+  // size(640, 480, P2D);
+  fullScreen(P2D);
   frameRate(30);
   context = new SimpleOpenNI(this);
 
@@ -38,8 +45,26 @@ void setup() {
   context.enableRGB();
 
   colorMode(HSB, 255, 100, 100);
-  glitchBuffer = new GlitchBuffer(width, height);
+  glitchBuffer = new GlitchBuffer(CAMERA_WIDTH, CAMERA_HEIGHT);
   userMask = new UserMask();
+
+  {
+    // Figure out how to scale up image
+    float scaleWidthRatio = width / CAMERA_WIDTH;
+    float scaleHeightRatio = height / CAMERA_HEIGHT;
+
+    if (CAMERA_HEIGHT * scaleWidthRatio <= height) {
+      // if scaling to max width still fits the height
+      scaleWidth = width;
+      scaleHeight = (int) (CAMERA_HEIGHT * scaleWidthRatio);
+    } else {
+      scaleHeight = height;
+      scaleWidth = (int) (CAMERA_WIDTH * scaleHeightRatio);
+    }
+    println("Agreed to scale video to "+ scaleWidth +" by "+ scaleHeight + ".");
+  }
+
+  imageMode(CENTER);
 
   printHelp();
 }
@@ -50,8 +75,11 @@ void draw() {
   background(0);
   glitchBuffer.feed(context.depthImage());
 
+  PGraphics canvas = createGraphics(CAMERA_WIDTH, CAMERA_HEIGHT);
+  canvas.beginDraw();
+
   if (displayBuffer) {
-    image(glitchBuffer.buffer, 0, 0);
+    canvas.image(glitchBuffer.buffer, 0, 0);
     return;
   }
 
@@ -62,17 +90,19 @@ void draw() {
     if (threshold) {
       video.filter(THRESHOLD, 0.2);
       if (maskUsers) {
-        // video = userMask.mask(video, context.userMap());
         userMask.mask_over(video, context.userMap());
       }
     }
 
-    image(video, 0, 0);
+    canvas.image(video, 0, 0);
   }
 
   if (drawMeSomeMotherfuckingRainbows) {
-    image(glitchBuffer.getRainbow(), 0, 0);
+    canvas.image(glitchBuffer.getRainbow(), 0, 0);
   }
+
+  canvas.endDraw();
+  image(canvas, width/2, height/2, scaleWidth, scaleHeight);
 
   if (record) {
     saveFrame();
