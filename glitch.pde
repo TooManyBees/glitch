@@ -7,6 +7,7 @@ UserMask userMask;
 
 boolean drawMeSomeMotherfuckingRainbows;
 boolean displayVideo;
+boolean displayBuffer;
 boolean threshold;
 boolean maskUsers;
 boolean record;
@@ -19,6 +20,7 @@ void setup() {
 
   drawMeSomeMotherfuckingRainbows = true;
   displayVideo = true;
+  displayBuffer = false;
   threshold = true;
   maskUsers = true;
   record = false;
@@ -48,6 +50,11 @@ void draw() {
   background(0);
   glitchBuffer.feed(context.depthImage());
 
+  if (displayBuffer) {
+    image(glitchBuffer.buffer, 0, 0);
+    return;
+  }
+
   if (displayVideo) {
     PImage video = context.rgbImage();
     video = sizeVideoToDepth(video);
@@ -76,6 +83,9 @@ void keyPressed() {
   switch (key) {
     case 'v':
       displayVideo = !displayVideo;
+    break;
+    case 'b':
+      displayBuffer = !displayBuffer;
     break;
     case 'r':
       drawMeSomeMotherfuckingRainbows = !drawMeSomeMotherfuckingRainbows;
