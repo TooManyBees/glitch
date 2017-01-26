@@ -65,6 +65,7 @@ void setup() {
   }
 
   imageMode(CENTER);
+  background(0);
 
   printHelp();
 }
@@ -72,18 +73,15 @@ void setup() {
 void draw() {
   context.update();
 
-  background(0);
   glitchBuffer.feed(context.depthImage());
 
   PGraphics canvas = createGraphics(CAMERA_WIDTH, CAMERA_HEIGHT);
   canvas.beginDraw();
+  canvas.background(0);
 
   if (displayBuffer) {
     canvas.image(glitchBuffer.buffer, 0, 0);
-    return;
-  }
-
-  if (displayVideo) {
+  } else if (displayVideo) {
     PImage video = context.rgbImage();
     video = sizeVideoToDepth(video);
 
@@ -105,7 +103,7 @@ void draw() {
   image(canvas, width/2, height/2, scaleWidth, scaleHeight);
 
   if (record) {
-    saveFrame();
+    canvas.save(String.format("glitch_%06d.tif", frameCount));
   }
 }
 
