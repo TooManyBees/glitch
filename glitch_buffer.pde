@@ -48,15 +48,18 @@ class GlitchBuffer {
 
   PImage getRainbow() {
     int len = w * h;
-    PImage f = createImage(w, h, HSB);
-    f.loadPixels();
+    PImage f = getMask();
 
     int c = color(random(255), 100, 100);
     for (int i = 0; i < len; ++i) {
-      f.pixels[i] = c;
+      int px = f.pixels[i];
+      if (brightness(px) > 0) {
+        f.pixels[i] = (px & 0xff000000) | c;
+      } else {
+        f.pixels[i] = 0;
+      }
     }
     f.updatePixels();
-    f.mask(getMask());
     return f;
   }
 
