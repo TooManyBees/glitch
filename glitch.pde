@@ -50,8 +50,8 @@ void setup() {
 
   {
     // Figure out how to scale up image
-    float scaleWidthRatio = width / CAMERA_WIDTH;
-    float scaleHeightRatio = height / CAMERA_HEIGHT;
+    float scaleWidthRatio = (float) width / (float) CAMERA_WIDTH;
+    float scaleHeightRatio = (float) height / (float) CAMERA_HEIGHT;
 
     if (CAMERA_HEIGHT * scaleWidthRatio <= height) {
       // if scaling to max width still fits the height
