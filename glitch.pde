@@ -10,10 +10,10 @@ boolean displayVideo;
 boolean threshold;
 boolean maskUsers;
 boolean record;
-boolean bordered;
 
 void setup() {
   size(640, 480);
+  frameRate(30);
   context = new SimpleOpenNI(this);
 
   drawMeSomeMotherfuckingRainbows = true;
@@ -21,7 +21,6 @@ void setup() {
   threshold = true;
   maskUsers = true;
   record = false;
-  bordered = true;
 
   if (!context.isInit()) {
     println("We fucked up somehow!");
@@ -81,11 +80,6 @@ void keyPressed() {
     break;
     case 'f':
       record = !record;
-      if (record) {
-        frameRate(30);
-      } else {
-        frameRate(60);
-      }
       println(record ? "Recording frames!" : "Stopped recording");
     break;
     case 'u':
@@ -93,10 +87,6 @@ void keyPressed() {
     break;
     case 't':
       threshold = !threshold;
-    break;
-    case 'b':
-      bordered = !bordered;
-      removeBorder(bordered);
     break;
   }
 
@@ -115,16 +105,9 @@ void printHelp() {
   String[] messages = {
     "(V) draw video",
     "(R) MOTHERFUCKING RAINBOWS",
-    "(B) remove border (buggy)",
     "(T) threshold video",
     "(U) mask threshold by users",
     "(F) record frames",
   };
   printArray(messages);
-}
-
-void removeBorder(boolean b) {
-  frame.removeNotify();
-  frame.setUndecorated(b);
-  frame.addNotify();
 }
