@@ -5,6 +5,8 @@ SimpleOpenNI context;
 GlitchBuffer glitchBuffer;
 UserMask userMask;
 
+GifLink gifLink;
+
 boolean drawMeSomeMotherfuckingRainbows;
 boolean displayVideo;
 boolean displayBuffer;
@@ -102,8 +104,11 @@ void draw() {
   canvas.endDraw();
   image(canvas, width/2, height/2, scaleWidth, scaleHeight);
 
-  if (record) {
-    canvas.save(String.format("glitch_%06d.tif", frameCount));
+  // if (record) {
+  //   canvas.save(String.format("glitch_%06d.tif", frameCount));
+  // }
+  if (gifLink != null) {
+    gifLink.feed(canvas);
   }
 }
 
@@ -119,8 +124,16 @@ void keyPressed() {
       drawMeSomeMotherfuckingRainbows = !drawMeSomeMotherfuckingRainbows;
     break;
     case 'f':
-      record = !record;
-      println(record ? "Recording frames!" : "Stopped recording");
+      // record = !record;
+      // println(record ? "Recording frames!" : "Stopped recording");
+      if (gifLink == null) {
+        gifLink = new GifLink(5);
+        println("Recording frames!");
+      } else {
+        gifLink.end();
+        gifLink = null;
+        println("Stopped recording");
+      }
     break;
     case 'u':
       maskUsers = !maskUsers;
