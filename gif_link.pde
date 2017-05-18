@@ -20,6 +20,7 @@ class GifLink {
 
     this.max_length = seconds * fps;
     this.length = 0;
+    println("Recording frames!");
   }
 
   void feed(PGraphics canvas) {
@@ -44,16 +45,17 @@ class GifLink {
     if (this.process != null) {
       return;
     }
+    clearGifLink();
+    println("Stopped recording.");
 
-    ProcessBuilder pb = new ProcessBuilder("/Users/esbe/.cargo/bin/engiffen",
-      "-o",
+    ProcessBuilder pb = new ProcessBuilder("bash", "-c", String.format(
+      "/Users/esbe/.cargo/bin/engiffen -o %s -f %d -s 2 -r %s %s && echo I am about to remove %s",
       String.format("%s.gif", sketchPath(this.dir)),
-      "-f",
-      new Integer(this.fps).toString(),
-      "-r",
+      this.fps,
       new File(sketchPath(this.dir), this.first_filename).toString(),
-      new File(sketchPath(this.dir), this.last_filename).toString()
-    );
+      new File(sketchPath(this.dir), this.last_filename).toString(),
+      sketchPath(this.dir)
+    ));
     pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
     pb.redirectError(ProcessBuilder.Redirect.INHERIT);
     try {

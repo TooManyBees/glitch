@@ -112,6 +112,10 @@ void draw() {
   }
 }
 
+void clearGifLink() {
+  gifLink = null;
+}
+
 void keyPressed() {
   switch (key) {
     case 'v':
@@ -128,11 +132,9 @@ void keyPressed() {
       // println(record ? "Recording frames!" : "Stopped recording");
       if (gifLink == null) {
         gifLink = new GifLink(5);
-        println("Recording frames!");
       } else {
         gifLink.end();
-        gifLink = null;
-        println("Stopped recording");
+        // gifLink = null;
       }
     break;
     case 'u':
