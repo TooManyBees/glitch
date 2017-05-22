@@ -53,7 +53,7 @@ class GifLink {
     File f = new File(this.engiffenPath);
     if (f.exists() && !f.isDirectory()) {
       ProcessBuilder pb = new ProcessBuilder("bash", "-c", String.format(
-        "%s -o %s -f %d -s 2 -r %s %s && echo I am about to remove %s",
+        "%s -o %s -f %d -s 2 -r %s %s && rm -r %s",
         this.engiffenPath,
         String.format("%s.gif", sketchPath(this.dir)),
         this.fps,
