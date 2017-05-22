@@ -1,6 +1,7 @@
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.nio.file.Paths;
 
 class GifLink {
 
@@ -13,6 +14,7 @@ class GifLink {
   private String dir;
 
   private static final int fps = 30;
+  private final String engiffenPath = Paths.get(System.getProperty("user.home"), ".cargo", "bin", "engiffen").toString();
 
   GifLink(int seconds) {
     DateFormat dateformat = new SimpleDateFormat("YYYY-MM-dd-HH-mm-ss");
@@ -48,20 +50,24 @@ class GifLink {
     clearGifLink();
     println("Stopped recording.");
 
-    ProcessBuilder pb = new ProcessBuilder("bash", "-c", String.format(
-      "/Users/esbe/.cargo/bin/engiffen -o %s -f %d -s 2 -r %s %s && echo I am about to remove %s",
-      String.format("%s.gif", sketchPath(this.dir)),
-      this.fps,
-      new File(sketchPath(this.dir), this.first_filename).toString(),
-      new File(sketchPath(this.dir), this.last_filename).toString(),
-      sketchPath(this.dir)
-    ));
-    pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-    pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-    try {
-      this.process = pb.start();
-    } catch (IOException e) {
-      println("uh oh ", e);
+    File f = new File(this.engiffenPath);
+    if (f.exists() && !f.isDirectory()) {
+      ProcessBuilder pb = new ProcessBuilder("bash", "-c", String.format(
+        "%s -o %s -f %d -s 2 -r %s %s && echo I am about to remove %s",
+        this.engiffenPath,
+        String.format("%s.gif", sketchPath(this.dir)),
+        this.fps,
+        new File(sketchPath(this.dir), this.first_filename).toString(),
+        new File(sketchPath(this.dir), this.last_filename).toString(),
+        sketchPath(this.dir)
+      ));
+      pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+      pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+      try {
+        this.process = pb.start();
+      } catch (IOException e) {
+        println("uh oh ", e);
+      }
     }
   }
 }
