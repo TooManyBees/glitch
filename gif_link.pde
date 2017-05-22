@@ -27,7 +27,7 @@ class GifLink {
 
   void feed(PGraphics canvas) {
     if (this.length <= this.max_length) {
-      String filename = String.format("glitch_%06d.tif", frameCount);
+      String filename = String.format("glitch_%06d.bmp", frameCount);
       if (this.first_filename == null) {
         this.first_filename = filename;
       }
