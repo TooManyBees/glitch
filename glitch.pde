@@ -7,13 +7,12 @@ UserMask userMask;
 
 GifLink gifLink;
 
-boolean drawMeSomeMotherfuckingRainbows;
-boolean displayVideo;
-boolean displayBuffer;
-boolean threshold;
-boolean maskUsers;
-boolean record;
+// boolean record;
 boolean paused;
+boolean displayUi;
+
+Toggle toggleBuffer, toggleVideo, toggleThreshold, toggleRainbows, toggleGif, toggleFrames;
+Toggle[] ui;
 
 int scaleHeight;
 int scaleWidth;
@@ -26,20 +25,17 @@ void setup() {
   fullScreen(P2D);
   frameRate(30);
   context = new SimpleOpenNI(this);
-
-  drawMeSomeMotherfuckingRainbows = true;
-  displayVideo = true;
-  displayBuffer = false;
-  threshold = true;
-  maskUsers = true;
-  record = false;
-  paused = false;
-
   if (!context.isInit()) {
     println("We fucked up somehow!");
     exit();
     return;
   }
+
+  // record = false;
+  paused = false;
+  displayUi = true;
+
+  setupUi();
 
   context.setMirror(true);
   context.enableDepth();
@@ -67,6 +63,8 @@ void setup() {
   }
 
   imageMode(CENTER);
+  rectMode(RADIUS);
+  textAlign(CENTER, CENTER);
   background(0);
 
   printHelp();
@@ -81,23 +79,21 @@ void draw() {
   canvas.beginDraw();
   canvas.background(0);
 
-  if (displayBuffer) {
+  if (toggleBuffer.on()) {
     canvas.image(glitchBuffer.buffer, 0, 0);
-  } else if (displayVideo) {
+  } else if (toggleVideo.on()) {
     PImage video = context.rgbImage();
     video = sizeVideoToDepth(video);
 
-    if (threshold) {
+    if (toggleThreshold.on()) {
       video.filter(THRESHOLD, 0.2);
-      if (maskUsers) {
-        userMask.mask_over(video, context.userMap());
-      }
+      userMask.mask_over(video, context.userMap());
     }
 
     canvas.image(video, 0, 0);
   }
 
-  if (drawMeSomeMotherfuckingRainbows) {
+  if (toggleRainbows.on()) {
     canvas.image(glitchBuffer.getRainbow(), 0, 0);
   }
 
@@ -110,6 +106,9 @@ void draw() {
   if (gifLink != null) {
     gifLink.feed(canvas);
   }
+
+  updateUi();
+  drawUi(this);
 }
 
 void clearGifLink() {
@@ -117,16 +116,15 @@ void clearGifLink() {
 }
 
 void keyPressed() {
+  for (int i = 0; i < ui.length; i++) {
+    Toggle t = ui[i];
+    if (t.wasPressed(key)) {
+      t.click();
+      return;
+    }
+  }
+
   switch (key) {
-    case 'v':
-      displayVideo = !displayVideo;
-    break;
-    case 'b':
-      displayBuffer = !displayBuffer;
-    break;
-    case 'r':
-      drawMeSomeMotherfuckingRainbows = !drawMeSomeMotherfuckingRainbows;
-    break;
     case 'f':
       // record = !record;
       // println(record ? "Recording frames!" : "Stopped recording");
@@ -138,10 +136,7 @@ void keyPressed() {
       }
     break;
     case 'u':
-      maskUsers = !maskUsers;
-    break;
-    case 't':
-      threshold = !threshold;
+      displayUi = !displayUi;
     break;
     case ' ':
       paused = !paused;
@@ -157,7 +152,7 @@ void keyPressed() {
     if (keyCode == UP) {
       glitchBuffer.crankUpTheRainbows();
       println("RAINBOW FACTOR "+glitchBuffer.factor()+" ENGAGE!");
-    } else {
+    } else if (keyCode == DOWN) {
       glitchBuffer.dialBackTheRainbows();
       println("RAINBOW FACTOR "+glitchBuffer.factor()+" ENGAGE!");
     }
@@ -165,12 +160,47 @@ void keyPressed() {
 }
 
 void printHelp() {
-  String[] messages = {
-    "(V) draw video",
-    "(R) MOTHERFUCKING RAINBOWS",
-    "(T) threshold video",
-    "(U) mask threshold by users",
-    "(F) record frames",
-  };
-  printArray(messages);
+  for (Toggle t : ui) {
+    println("("+t.label()+") "+t.description());
+  }
+  println("(f) record frames");
+  println("( space ) pause");
+}
+
+void setupUi() {
+  toggleBuffer = new Toggle("B", 'b', "draw buffer", 20, 20);
+  toggleVideo = new Toggle("V", 'v', "draw video", 20, 45, true);
+  toggleThreshold = new Toggle("T", 't', "threshold video", 20, 70, true);
+  toggleRainbows = new Toggle("R", 'r', "rainbows", 20, 95, true);
+  ui = new Toggle[]{toggleBuffer, toggleVideo, toggleThreshold, toggleRainbows};
+}
+
+void updateUi() {
+  toggleVideo.enableThisFrame(!toggleBuffer.on());
+  toggleThreshold.enableThisFrame(!toggleBuffer.on());
+  toggleRainbows.enableThisFrame(!toggleBuffer.on());
+  // toggleFrames.enableThisFrame(!toggleGif.on());
+  // toggleGif.enableThisFrame(!toggleFrames.on());
+}
+
+void drawUi(PApplet canvas) {
+  if (displayUi) {
+    for (Toggle t : ui) {
+      t.draw(canvas);
+    }
+  }
+}
+
+void mouseClicked() {
+  if (displayUi) {
+    int mx = (int) mouseX;
+    int my = (int) mouseY;
+    for (int i = 0; i < ui.length; i++) {
+      Toggle t = ui[i];
+      if (t.wasClicked(mx, my)) {
+        t.click();
+        return;
+      }
+    }
+  }
 }
