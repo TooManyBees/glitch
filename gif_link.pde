@@ -17,6 +17,7 @@ class GifLink {
   private final String engiffenCmd = Paths.get(System.getProperty("user.home"), ".cargo", "bin", "engiffen").toString();
   // Is file separator == "\" a reliable way to test for Windows? Probably not!
   private final String deleteCmd = System.getProperty("file.separator") == "\\" ? "del" : "rm -r";
+  private final boolean engiffenInstalled = isEngiffenInstalled();
 
   GifLink(int seconds) {
     DateFormat dateformat = new SimpleDateFormat("YYYY-MM-dd-HH-mm-ss");
@@ -28,7 +29,9 @@ class GifLink {
   }
 
   void feed(PGraphics canvas) {
-    if (this.length <= this.max_length) {
+    // Only limit length if we're actually turning something into a gif
+    // Otherwise dump frames infinitely like usual
+    if (!this.engiffenInstalled || (this.length <= this.max_length)) {
       String filename = String.format("glitch_%06d.bmp", frameCount);
       if (this.first_filename == null) {
         this.first_filename = filename;
@@ -52,8 +55,7 @@ class GifLink {
     clearGifLink();
     println("Stopped recording.");
 
-    File f = new File(this.engiffenCmd);
-    if (f.exists() && !f.isDirectory()) {
+    if (this.engiffenInstalled) {
       ProcessBuilder pb = new ProcessBuilder("bash", "-c", String.format(
         "%s -o %s -f %d -s 2 -r %s %s && %s %s",
         this.engiffenCmd,
@@ -72,5 +74,10 @@ class GifLink {
         println("uh oh ", e);
       }
     }
+  }
+
+  private boolean isEngiffenInstalled() {
+    File f = new File(this.engiffenCmd);
+    return f.exists() && !f.isDirectory();
   }
 }
