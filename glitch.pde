@@ -7,11 +7,10 @@ UserMask userMask;
 
 GifLink gifLink;
 
-// boolean record;
 boolean paused;
 boolean displayUi;
 
-Toggle toggleBuffer, toggleVideo, toggleThreshold, toggleRainbows, toggleGif, toggleFrames;
+Toggle toggleBuffer, toggleVideo, toggleThreshold, toggleRainbows;
 Toggle[] ui;
 
 int scaleHeight;
@@ -33,7 +32,6 @@ void setup() {
     return;
   }
 
-  // record = false;
   paused = false;
   displayUi = true;
 
@@ -104,9 +102,6 @@ void draw() {
   canvas.endDraw();
   image(canvas, width/2, height/2, scaleWidth, scaleHeight);
 
-  // if (record) {
-  //   canvas.save(String.format("glitch_%06d.tif", frameCount));
-  // }
   if (gifLink != null) {
     gifLink.feed(canvas);
   }
@@ -149,8 +144,6 @@ void keyPressed() {
     }
     switch (key) {
       case 'f':
-        // record = !record;
-        // println(record ? "Recording frames!" : "Stopped recording");
         if (gifLink == null) {
           gifLink = new GifLink(5);
         } else {
@@ -192,8 +185,6 @@ void updateUi() {
   toggleVideo.enableThisFrame(!toggleBuffer.on());
   toggleThreshold.enableThisFrame(!toggleBuffer.on());
   toggleRainbows.enableThisFrame(!toggleBuffer.on());
-  // toggleFrames.enableThisFrame(!toggleGif.on());
-  // toggleGif.enableThisFrame(!toggleFrames.on());
 }
 
 void drawUi(PApplet canvas) {
