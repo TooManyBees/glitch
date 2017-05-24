@@ -17,6 +17,8 @@ Toggle[] ui;
 int scaleHeight;
 int scaleWidth;
 
+float thresholdVideo;
+
 private final int CAMERA_WIDTH = 640;
 private final int CAMERA_HEIGHT = 480;
 
@@ -34,6 +36,8 @@ void setup() {
   // record = false;
   paused = false;
   displayUi = true;
+
+  thresholdVideo = 0.2;
 
   setupUi();
 
@@ -86,7 +90,7 @@ void draw() {
     video = sizeVideoToDepth(video);
 
     if (toggleThreshold.on()) {
-      video.filter(THRESHOLD, 0.2);
+      video.filter(THRESHOLD, thresholdVideo);
       userMask.mask_over(video, context.userMap());
     }
 
@@ -116,45 +120,54 @@ void clearGifLink() {
 }
 
 void keyPressed() {
-  for (int i = 0; i < ui.length; i++) {
-    Toggle t = ui[i];
-    if (t.wasPressed(key)) {
-      t.click();
-      return;
-    }
-  }
-
-  switch (key) {
-    case 'f':
-      // record = !record;
-      // println(record ? "Recording frames!" : "Stopped recording");
-      if (gifLink == null) {
-        gifLink = new GifLink(5);
-      } else {
-        gifLink.end();
-        // gifLink = null;
-      }
-    break;
-    case 'u':
-      displayUi = !displayUi;
-    break;
-    case ' ':
-      paused = !paused;
-      if (paused) {
-        noLoop();
-      } else {
-        loop();
-      }
-    break;
-  }
-
   if (key == CODED) {
-    if (keyCode == UP) {
-      glitchBuffer.crankUpTheRainbows();
-      println("RAINBOW FACTOR "+glitchBuffer.factor()+" ENGAGE!");
-    } else if (keyCode == DOWN) {
-      glitchBuffer.dialBackTheRainbows();
-      println("RAINBOW FACTOR "+glitchBuffer.factor()+" ENGAGE!");
+    switch (keyCode) {
+      case UP:
+        glitchBuffer.crankUpTheRainbows();
+        println("RAINBOW FACTOR "+glitchBuffer.factor()+" ENGAGE!");
+        break;
+      case DOWN:
+        glitchBuffer.dialBackTheRainbows();
+        println("RAINBOW FACTOR "+glitchBuffer.factor()+" ENGAGE!");
+        break;
+      case LEFT:
+        thresholdVideo = min(1.0, (round(thresholdVideo * 40) + 1) / 40.0);
+        println("Threshold at "+thresholdVideo);
+        break;
+      case RIGHT:
+        thresholdVideo = max(0.0, (round(thresholdVideo * 40) - 1) / 40.0);
+        println("Threshold at "+thresholdVideo);
+        break;
+    }
+  } else {
+    for (int i = 0; i < ui.length; i++) {
+      Toggle t = ui[i];
+      if (t.wasPressed(key)) {
+        t.click();
+        return;
+      }
+    }
+    switch (key) {
+      case 'f':
+        // record = !record;
+        // println(record ? "Recording frames!" : "Stopped recording");
+        if (gifLink == null) {
+          gifLink = new GifLink(5);
+        } else {
+          gifLink.end();
+        }
+        break;
+      case 'u':
+        displayUi = !displayUi;
+        break;
+      case ' ':
+        paused = !paused;
+        if (paused) {
+          noLoop();
+        } else {
+          loop();
+        }
+        break;
     }
   }
 }
