@@ -23,6 +23,9 @@ private final int CAMERA_HEIGHT = 480;
 
 private final int RECORD_MAX_SECONDS = 5;
 
+private PFont statsFont;
+private PFont uiFont;
+
 void setup() {
   // size(640, 480, P2D);
   fullScreen(P2D);
@@ -66,9 +69,10 @@ void setup() {
     println("Agreed to scale video to "+ scaleWidth +" by "+ scaleHeight + ".");
   }
 
+  statsFont = createFont("AnonymousPro-Bold", 18);
+  uiFont = createFont("AnonymousPro", 12);
+
   imageMode(CENTER);
-  rectMode(RADIUS);
-  textAlign(CENTER, CENTER);
   background(0);
 
   printHelp();
@@ -121,19 +125,15 @@ void keyPressed() {
     switch (keyCode) {
       case UP:
         glitchBuffer.crankUpTheRainbows();
-        println("RAINBOW FACTOR "+glitchBuffer.factor()+" ENGAGE!");
         break;
       case DOWN:
         glitchBuffer.dialBackTheRainbows();
-        println("RAINBOW FACTOR "+glitchBuffer.factor()+" ENGAGE!");
         break;
       case LEFT:
         thresholdVideo = min(1.0, (round(thresholdVideo * 40) + 1) / 40.0);
-        println("Threshold at "+thresholdVideo);
         break;
       case RIGHT:
         thresholdVideo = max(0.0, (round(thresholdVideo * 40) - 1) / 40.0);
-        println("Threshold at "+thresholdVideo);
         break;
     }
   } else {
@@ -194,9 +194,16 @@ void updateUi() {
 
 void drawUi(PApplet canvas) {
   if (displayUi) {
+    canvas.rectMode(RADIUS);
+    canvas.textAlign(CENTER, CENTER);
     for (Toggle t : ui) {
       t.draw(canvas);
     }
+
+    canvas.fill(255);
+    canvas.textAlign(LEFT, BOTTOM);
+    canvas.textFont(statsFont);
+    canvas.text("Rainbows: "+glitchBuffer.factor()+"\n"+"Faces: "+thresholdVideo, 0, scaleHeight);
   }
 }
 

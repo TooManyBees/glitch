@@ -77,6 +77,7 @@ class Toggle {
     canvas.stroke(fg);
     canvas.rect(x, y, (float) r, (float) r);
     canvas.fill(fg);
+    canvas.textFont(uiFont);
     canvas.text(label, x, y);
   }
 }
