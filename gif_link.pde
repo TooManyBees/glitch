@@ -14,7 +14,9 @@ class GifLink {
   private String dir;
 
   private static final int fps = 30;
-  private final String engiffenPath = Paths.get(System.getProperty("user.home"), ".cargo", "bin", "engiffen").toString();
+  private final String engiffenCmd = Paths.get(System.getProperty("user.home"), ".cargo", "bin", "engiffen").toString();
+  // Is file separator == "\" a reliable way to test for Windows? Probably not!
+  private final String deleteCmd = System.getProperty("file.separator") == "\\" ? "del" : "rm -r";
 
   GifLink(int seconds) {
     DateFormat dateformat = new SimpleDateFormat("YYYY-MM-dd-HH-mm-ss");
@@ -50,15 +52,16 @@ class GifLink {
     clearGifLink();
     println("Stopped recording.");
 
-    File f = new File(this.engiffenPath);
+    File f = new File(this.engiffenCmd);
     if (f.exists() && !f.isDirectory()) {
       ProcessBuilder pb = new ProcessBuilder("bash", "-c", String.format(
-        "%s -o %s -f %d -s 2 -r %s %s && rm -r %s",
-        this.engiffenPath,
+        "%s -o %s -f %d -s 2 -r %s %s && %s %s",
+        this.engiffenCmd,
         String.format("%s.gif", sketchPath(this.dir)),
         this.fps,
         new File(sketchPath(this.dir), this.first_filename).toString(),
         new File(sketchPath(this.dir), this.last_filename).toString(),
+        this.deleteCmd,
         sketchPath(this.dir)
       ));
       pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
