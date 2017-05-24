@@ -21,6 +21,8 @@ float thresholdVideo;
 private final int CAMERA_WIDTH = 640;
 private final int CAMERA_HEIGHT = 480;
 
+private final int RECORD_MAX_SECONDS = 5;
+
 void setup() {
   // size(640, 480, P2D);
   fullScreen(P2D);
@@ -145,7 +147,7 @@ void keyPressed() {
     switch (key) {
       case 'f':
         if (gifLink == null) {
-          gifLink = new GifLink(5);
+          gifLink = new GifLink(RECORD_MAX_SECONDS);
         } else {
           gifLink.end();
         }
@@ -166,10 +168,13 @@ void keyPressed() {
 }
 
 void printHelp() {
+  println("(u) toggle ui");
   for (Toggle t : ui) {
     println("("+t.label()+") "+t.description());
   }
   println("(f) record frames");
+  println("(↓ ↑) less/more rainbow");
+  println("(← →) less/more user");
   println("( space ) pause");
 }
 
