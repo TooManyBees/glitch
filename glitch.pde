@@ -202,7 +202,7 @@ void drawUi(PApplet canvas) {
 
     canvas.fill(255);
     canvas.textAlign(LEFT, BOTTOM);
-    canvas.textFont(statsFont);
+    if (statsFont != null) { canvas.textFont(statsFont); }
     canvas.text("Rainbows: "+glitchBuffer.factor()+"\n"+"Faces: "+thresholdVideo, 0, scaleHeight);
   }
 }
