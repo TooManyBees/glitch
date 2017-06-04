@@ -41,7 +41,7 @@ class GifLink {
       canvas.save(out_frame);
     }
 
-    if (this.process == null && this.length >= this.max_length) {
+    if (this.engiffenInstalled && this.process == null && this.length >= this.max_length) {
       this.end();
     }
 
@@ -49,11 +49,12 @@ class GifLink {
   }
 
   void end() {
+    clearGifLink();
+    println("Stopped recording.");
+
     if (this.process != null) {
       return;
     }
-    clearGifLink();
-    println("Stopped recording.");
 
     if (this.engiffenInstalled) {
       ProcessBuilder pb = new ProcessBuilder("bash", "-c", String.format(
