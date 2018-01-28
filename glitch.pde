@@ -93,12 +93,13 @@ void draw() {
     PImage video = context.rgbImage();
     video = sizeVideoToDepth(video);
 
-    if (toggleThreshold.on()) {
-      video.filter(THRESHOLD, thresholdVideo);
-      userMask.mask_over(video, context.userMap());
-    }
+    // if (toggleThreshold.on()) {
+      // video.filter(THRESHOLD, thresholdVideo);
+      // userMask.mask_over(video, context.userMap());
+      userMask.paint_onto(canvas, video, context.userImage(), thresholdVideo);
+    // }
 
-    canvas.image(video, 0, 0);
+    // canvas.image(video, 0, 0);
   }
 
   if (toggleRainbows.on()) {
